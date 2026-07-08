@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="MultiBank Local Smoke" verbose="1" parallel="false">
+    <listeners>
+        <listener class-name="com.multibank.framework.utilities.RetryAnnotationTransformer"/>
+        <listener class-name="com.multibank.framework.reporting.TestListener"/>
+    </listeners>
+    <test name="DWeb Local Smoke">
+        <parameter name="platform" value="dweb"/>
+        <classes>
+            <class name="com.multibank.tests.common.HeaderNavigationDWebTests"/>
+            <class name="com.multibank.tests.home.HomePageBannerDWebTests"/>
+            <class name="com.multibank.tests.home.HomePageDownloadLinkDWebTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageSpotMarketDWebTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageTradingPairDWebTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageMarketSentimentDWebTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageDownloadLinkDWebTests"/>
+            <class name="com.multibank.tests.company.CompanyPageContentDWebTests"/>
+            <class name="com.multibank.tests.common.FooterLinkDWebTests"/>
+            <class name="com.multibank.tests.error.ErrorPageInvalidRouteDWebTests"/>
+        </classes>
+    </test>
+</suite>

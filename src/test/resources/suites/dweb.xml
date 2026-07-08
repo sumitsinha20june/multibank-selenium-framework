@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="MultiBank DWeb Suite" verbose="1" parallel="tests" thread-count="5">
+    <listeners>
+        <listener class-name="com.multibank.framework.utilities.RetryAnnotationTransformer"/>
+        <listener class-name="com.multibank.framework.reporting.TestListener"/>
+    </listeners>
+    <test name="Chrome DWeb">
+        <parameter name="platform" value="dweb"/>
+        <parameter name="browser" value="chrome"/>
+        <packages>
+            <package name="com.multibank.tests.common"/>
+            <package name="com.multibank.tests.home"/>
+            <package name="com.multibank.tests.explore"/>
+            <package name="com.multibank.tests.company"/>
+            <package name="com.multibank.tests.error"/>
+        </packages>
+    </test>
+    <test name="Firefox DWeb">
+        <parameter name="platform" value="dweb"/>
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="com.multibank.tests.common.HeaderNavigationTests"/>
+            <class name="com.multibank.tests.home.HomePageBannerTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageSpotMarketTests"/>
+            <class name="com.multibank.tests.explore.ExplorePageMarketSentimentTests"/>
+            <class name="com.multibank.tests.company.CompanyPageContentTests"/>
+            <class name="com.multibank.tests.common.FooterLinkTests"/>
+        </classes>
+    </test>
+</suite>
