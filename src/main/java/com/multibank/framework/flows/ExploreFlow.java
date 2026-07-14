@@ -5,7 +5,10 @@ import com.multibank.framework.driver.DriverManager;
 import com.multibank.framework.pages.factory.PageObjectFactory;
 import com.multibank.framework.pages.interfaces.IExplorePage;
 import com.multibank.framework.utilities.LoggerUtil;
+import com.multibank.framework.utilities.NetworkThrottler;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
 
@@ -49,21 +52,20 @@ public class ExploreFlow {
         return explorePage.hasMarketSentimentLabels();
     }
 
-    public void verifyTimeoutHandling(String expectedHeading) {
+    public void verifyTimeoutHandling() {
+        WebDriver driver = DriverManager.getDriver();
         Duration originalTimeout = Duration.ofSeconds(FrameworkConfig.pageLoadTimeout());
-        DriverManager.getDriver().manage().timeouts().pageLoadTimeout(Duration.ofMillis(1));
         try {
+            NetworkThrottler.enable2G(driver);
+            driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
             explorePage.open();
             throw new AssertionError("Expected page load timeout but page loaded successfully");
-        } catch (Exception e) {
-            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
-            if (!msg.contains("timeout")) {
-                throw new AssertionError("Expected timeout error but got: " + e.getMessage());
-            }
-            log.info("Page load timeout correctly triggered: {}", e.getMessage());
+        } catch (TimeoutException e) {
+            log.info("Page load timeout correctly triggered under 2G throttling: {}", e.getMessage());
         } finally {
-            DriverManager.getDriver().manage().timeouts().pageLoadTimeout(originalTimeout);
-            DriverManager.getDriver().get("about:blank");
+            NetworkThrottler.disable(driver);
+            driver.manage().timeouts().pageLoadTimeout(originalTimeout);
+            driver.get("about:blank");
         }
     }
 }
