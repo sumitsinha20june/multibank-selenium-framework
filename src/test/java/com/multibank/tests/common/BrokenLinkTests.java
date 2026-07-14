@@ -11,14 +11,20 @@ public class BrokenLinkTests extends BaseTest {
     @Test(dataProvider = "excelData")
     public void verifyCriticalLinksAreNotBroken(TestCaseData data) {
         int max = Integer.parseInt(data.data("expectedStatusMax"));
+        String baseDomain = config.get("base.url").replace("https://", "").split("/")[0];
         for (String link : data.data("links").split("\\|")) {
             String[] pair = link.split(":", 2);
             String target = resolveTarget(pair[1]);
-            int status = LinkChecker.statusCode(target);
-            if (ReportLogger.getTest() != null && status > max) {
-                ReportLogger.getTest().warning("Broken link: " + pair[0] + " -> " + target + " returned status " + status);
+            if (target.contains(baseDomain)) {
+                int status = LinkChecker.statusCode(target);
+                if (ReportLogger.getTest() != null && status > max) {
+                    ReportLogger.getTest().warning("Broken link: " + pair[0] + " -> " + target + " returned status " + status);
+                }
+                Assert.assertTrue(status <= max, pair[0] + " returned status " + status + " for " + target);
+            } else {
+                Assert.assertTrue(target.startsWith("https://"),
+                        pair[0] + " external href does not start with https: " + target);
             }
-            Assert.assertTrue(status <= max, pair[0] + " returned status " + status + " for " + target);
         }
     }
 
