@@ -1,14 +1,24 @@
 package com.multibank.framework.pages.dweb;
 
+import com.multibank.framework.actions.WaitActions;
 import com.multibank.framework.actions.WebActions;
 import com.multibank.framework.pages.base.BasePage;
 import com.multibank.framework.pages.interfaces.IExplorePage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class DWebExplorePage extends BasePage implements IExplorePage {
 
+    private static final Pattern PRICE_PATTERN = Pattern.compile("\\$?\\d{1,3}(,\\d{3})*(\\.\\d{2})?");
+    private static final Pattern CHANGE_PATTERN = Pattern.compile("[+-]?\\d+\\.?\\d*\\s*%");
+
     private final By spotMarketHeading = By.xpath("//h2[contains(text(), '" + config.get("explore.spot.market.heading") + "')]");
     private final By marketSentimentHeading = By.xpath("//*[contains(normalize-space(), '" + config.get("explore.market.sentiment.heading") + "')]");
+
+    private static final By TABLE_LOCATOR = By.xpath("//section[contains(@class,'bg-dark')]//table");
 
     public void open() {
         openPath("explore.path");
@@ -23,7 +33,14 @@ public class DWebExplorePage extends BasePage implements IExplorePage {
     }
 
     public boolean isTradingPairVisible(String symbol, String name) {
-        return WebActions.pageContains(symbol) && WebActions.pageContains(name);
+        try {
+            WebElement table = findTradingPairTable();
+            WebElement row = table.findElement(
+                    By.xpath(".//tr[.//span[text()='" + symbol + "'] and .//span[text()='" + name + "']]"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean hasCategory(String category) {
@@ -45,16 +62,24 @@ public class DWebExplorePage extends BasePage implements IExplorePage {
     }
 
     public boolean hasPriceAndChangeNearSymbol(String symbol) {
-        String page = WebActions.text(By.tagName("body"));
-        int index = page.toLowerCase().indexOf(symbol.toLowerCase());
-        if (index < 0) {
+        try {
+            WebElement table = findTradingPairTable();
+            WebElement row = table.findElement(
+                    By.xpath(".//tr[.//span[text()='" + symbol + "']]"));
+            List<WebElement> cells = row.findElements(By.tagName("td"));
+            if (cells.size() < 3) return false;
+            String priceText = cells.get(1).getText().trim();
+            String changeText = cells.get(2).getText().trim();
+            return PRICE_PATTERN.matcher(priceText).find()
+                    && CHANGE_PATTERN.matcher(changeText).find();
+        } catch (Exception e) {
             return false;
         }
-        int start = Math.max(0, index - 50);
-        int end = Math.min(page.length(), index + 250);
-        String context = page.substring(start, end);
-        boolean hasPrice = context.matches("(?s).*\\$?\\d+[\\.\\,]\\d{2}.*");
-        boolean hasChange = context.matches("(?s).*[+-]?\\d+\\.?\\d*\\s*%.*");
-        return hasPrice && hasChange;
+    }
+
+    private WebElement findTradingPairTable() {
+        WaitActions.visible(By.xpath("//h3[contains(text(),\"Today's top crypto prices\")]"),
+                "Trading pair prices heading");
+        return WaitActions.visible(TABLE_LOCATOR, "Trading pair prices table");
     }
 }

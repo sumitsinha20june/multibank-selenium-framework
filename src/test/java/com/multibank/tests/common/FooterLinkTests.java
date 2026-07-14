@@ -1,6 +1,7 @@
 package com.multibank.tests.common;
 
 import com.multibank.framework.flows.FooterFlow;
+import com.multibank.framework.models.TestCaseData;
 import com.multibank.framework.reporting.ReportLogger;
 import com.multibank.framework.utilities.SoftAssertManager;
 import com.multibank.tests.base.BaseTest;
@@ -13,7 +14,7 @@ public class FooterLinkTests extends BaseTest {
     private final FooterFlow footerFlow = new FooterFlow();
 
     @Test(dataProvider = "excelData")
-    public void verifyAllFooterLinksResolve() {
+    public void verifyAllFooterLinksResolve(TestCaseData data) {
         Map<String, Integer> results = footerFlow.checkAllFooterLinkStatuses();
         SoftAssert softAssert = SoftAssertManager.create();
         for (Map.Entry<String, Integer> entry : results.entrySet()) {
