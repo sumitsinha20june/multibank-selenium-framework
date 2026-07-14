@@ -12,7 +12,7 @@ import java.util.Map;
 public class FooterLinkTests extends BaseTest {
     private final FooterFlow footerFlow = new FooterFlow();
 
-    @Test
+    @Test(dataProvider = "excelData")
     public void verifyAllFooterLinksResolve() {
         Map<String, Integer> results = footerFlow.checkAllFooterLinkStatuses();
         SoftAssert softAssert = SoftAssertManager.create();
