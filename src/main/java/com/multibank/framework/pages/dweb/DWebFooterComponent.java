@@ -1,7 +1,6 @@
 package com.multibank.framework.pages.dweb;
 
 import com.multibank.framework.actions.JavaScriptActions;
-import com.multibank.framework.actions.WebActions;
 import com.multibank.framework.driver.DriverManager;
 import com.multibank.framework.pages.base.BasePage;
 import com.multibank.framework.pages.interfaces.IFooterComponent;
@@ -15,17 +14,6 @@ import java.util.Map;
 public class DWebFooterComponent extends BasePage implements IFooterComponent {
 
     private static final List<String> SKIP_PREFIXES = List.of("#", "javascript:", "mailto:", "tel:");
-
-    public String hrefFor(String linkText) {
-        JavaScriptActions.scrollToBottom();
-        return WebActions.attribute(linkByText(linkText), "href");
-    }
-
-    public String targetFor(String linkText) {
-        JavaScriptActions.scrollToBottom();
-        String target = WebActions.attribute(linkByText(linkText), "target");
-        return target == null || target.isBlank() ? "_self" : target;
-    }
 
     public Map<String, String> getAllFooterLinks() {
         JavaScriptActions.scrollToBottom();

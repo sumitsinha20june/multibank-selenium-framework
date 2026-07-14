@@ -21,14 +21,6 @@ public class FooterFlow {
         this.footer = PageObjectFactory.getFooterComponent();
     }
 
-    public boolean linkDestinationMatches(String linkText, String expectedPath) {
-        return footer.hrefFor(linkText).contains(expectedPath);
-    }
-
-    public String targetFor(String linkText) {
-        return footer.targetFor(linkText);
-    }
-
     public Map<String, Integer> checkAllFooterLinkStatuses() {
         Map<String, String> footerLinks = footer.getAllFooterLinks();
         Map<String, Integer> results = new LinkedHashMap<>();
