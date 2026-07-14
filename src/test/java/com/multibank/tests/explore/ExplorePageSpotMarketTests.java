@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 public class ExplorePageSpotMarketTests extends BaseTest {
     private final ExploreFlow exploreFlow = new ExploreFlow();
 
+    //currently not blocking API request on page
     @Test(dataProvider = "excelData")
     public void verifySpotMarketSectionRenders(TestCaseData data) {
         exploreFlow.open();
